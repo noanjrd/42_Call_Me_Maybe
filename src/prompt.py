@@ -26,6 +26,25 @@ def get_prompt_for_function_name(input, functions: list[Function]):
     prompt+="Available functions:\n"
     for function in functions:
         prompt+=function.get_name_description() + "\n"
-    prompt+=f"Select the single function best suited to answer : {input}"
     # prompt += f"User's question: {input}\n"
+    prompt+=f"Select the single function best suited to answer: {input}"
+    return prompt
+
+def get_prompt_for_parameters(input: str, function: Function) -> str:
+    prompt = f"Function name: {function.name}\n"
+    prompt += f"Description: {function.description}\n\n"
+
+    prompt += "Parameters:\n"
+
+    for name, info in function.parameters.items():
+        prompt += f"- {name}: {info['type']}"
+        
+        
+        prompt += "\n"
+
+    prompt += "\n"
+    prompt += f"User request: {input}\n\n"
+    prompt += "Extract the values for the function parameters from the user request.\n"
+    # prompt += "Return only a JSON object containing the parameter names and their values."
+    print(prompt)
     return prompt

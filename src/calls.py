@@ -19,10 +19,7 @@ def get_next_logit_for_function_name(encoded_prompt, lap,  candidates):
 
 def get_answer_function_name(prompt, functions:list[Function]):
     encoded_prompt = llm.encode(prompt)[0].tolist()
-    # vocab_path = llm.get_path_to_vocab_file()
-    # print(vocab_path)
-    # with open(vocab_path, "r") as file:
-    #     print(file.read())
+
     candidates = []
     for function in functions:
         candidates.append(function.tokenized_name)
@@ -50,4 +47,32 @@ def get_answer_function_name(prompt, functions:list[Function]):
         lap+=1
         print(candidates)
     print("".join(answer))
-    return
+    return "".join(answer)
+
+
+
+
+def get_answer_parameters(prompt):
+    encoded_prompt = llm.encode(prompt)[0].tolist()
+
+
+    # print(functions_tokens)
+    answer = []
+    lap = 0
+
+    while lap < 30:
+        logits_list = llm.get_logits_from_input_ids(encoded_prompt)
+
+
+        max_logit = max(logits_list)
+        token = logits_list.index(max_logit)
+        word = llm.decode(token)
+        prompt+=word
+        encoded_prompt.append(token)
+        print(word)
+        lap+=1
+        
+        # print(candidates)
+    print("".join(answer))
+    return "".join(answer)
+

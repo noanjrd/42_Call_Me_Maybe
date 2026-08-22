@@ -9,4 +9,4 @@ class Function(BaseModel):
 
 
     def get_name_description(self):
-        return f"name: {self.name}() - description: {self.description}"
+        return f"name: {self.name} - description: {self.description}"
