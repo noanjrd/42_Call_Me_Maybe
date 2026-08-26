@@ -1,7 +1,6 @@
 from llm_sdk import Small_LLM_Model
 from Function import Function
-
-llm = Small_LLM_Model()
+from model import llm
 
 def get_next_logit_for_function_name(encoded_prompt, lap,  candidates):
     logits_list = llm.get_logits_from_input_ids(encoded_prompt)
@@ -48,31 +47,3 @@ def get_answer_function_name(prompt, functions:list[Function]):
         print(candidates)
     print("".join(answer))
     return "".join(answer)
-
-
-
-
-def get_answer_parameters(prompt):
-    encoded_prompt = llm.encode(prompt)[0].tolist()
-
-
-    # print(functions_tokens)
-    answer = []
-    lap = 0
-
-    while lap < 30:
-        logits_list = llm.get_logits_from_input_ids(encoded_prompt)
-
-
-        max_logit = max(logits_list)
-        token = logits_list.index(max_logit)
-        word = llm.decode(token)
-        prompt+=word
-        encoded_prompt.append(token)
-        print(word)
-        lap+=1
-        
-        # print(candidates)
-    print("".join(answer))
-    return "".join(answer)
-
