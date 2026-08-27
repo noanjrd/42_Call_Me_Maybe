@@ -1,0 +1,26 @@
+[
+    {
+        "prompt": "Calculate the square root of 144",
+        "name": "fn_get_square_root",
+        "parameters": {
+            "a": 144
+        }
+    },
+    {
+        "prompt": "Whats is 2 plus 3",
+        "name": "fn_add_numbers",
+        "parameters": {
+            "a": 2,
+            "b": 3
+        }
+    },
+    {
+        "prompt": "Replace all vowels in 'Programming is fun' with asterisks",
+        "name": "fn_substitute_string_with_regex",
+        "parameters": {
+            "source_string": "Programming is fun",
+            "regex": "([AEIOUaeiou])",
+            "replacement": "*"
+        }
+    }
+]

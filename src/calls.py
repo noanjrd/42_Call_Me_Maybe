@@ -44,6 +44,6 @@ def get_answer_function_name(prompt, functions:list[Function]):
                 new_candidates.append(c)
         candidates = new_candidates
         lap+=1
-        print(candidates)
+        # print(candidates)
     print("".join(answer))
     return "".join(answer)
