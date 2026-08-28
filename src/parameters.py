@@ -19,12 +19,45 @@ class Parameters(BaseModel):
     current_value: str
 
 
+def bool(past_values, value):
+    word = past_values + llm.decode(value)
+    word = word.lstrip()
+    n = len(word)
+    if n == 0:
+        return False
+    if "true"[::n] in word:
+        if n > 4:
+            for i in range(4,n):
+                if word[i] not in ",}":
+                    return False
+        return True
+    if "false"[::n] in word:
+        if n > 5:
+            for i in range(5,n):
+                if word[i] not in ",}":
+                    return False
+        return True
+    return False
+
+
+
 def string(past_values, value):
     word = past_values + llm.decode(value)
-    if len(word) == 0:
+    word = word.lstrip()
+    n = len(word)
+    if n == 0:
         return False
-    if not past_values:
-          return word.lstrip().startswith('"')
+    if word[0] != '"':
+        return False
+    i = 0
+    comma = False
+    while i < n:
+        if comma and word[i] != ' ':
+            return False
+        if word[i] == ',':
+            comma = True
+        i+=1
+
     return True
 
 def number(past_values, value):
@@ -69,12 +102,10 @@ def number(past_values, value):
                     break
             else: return False
         if status == "AFTER_COMMA_SPACE":
-            if all(letter is ' ' for letter in word) or len(word) == 0:
+            if all(letter == ' ' for letter in word) or len(word) == 0:
                 status = "END"
                 continue
             return False
-        
-
         
     return True
 
@@ -84,16 +115,17 @@ def number(past_values, value):
 def get_next_logit_for_function_parameters(p: Parameters):
     logits_list = llm.get_logits_from_input_ids(p.encoded_prompt)
     # print(logits_list)
+    functions = [number, string, bool]
+    type_names = ["number", "string", "bool"]
     allowed_legits = None
     if p.predicting_value == False:
         allowed_legits = [logit for index, logit in enumerate(logits_list) if index == p.keys_encoded[p.current_parameter_index][p.index_key_token]]
     else:
-        if p.types[p.current_parameter_index] == "string":
-            allowed_legits = [logit for index, logit in enumerate(logits_list) if string(p.current_value, index) is True]
-        elif p.types[p.current_parameter_index] == "number":
-            allowed_legits = [logit for index, logit in enumerate(logits_list) if number(p.current_value, index) is True]
+        if p.types[p.current_parameter_index] in type_names:
+            allowed_legits = [logit for index, logit in enumerate(logits_list) if functions[type_names.index(p.types[p.current_parameter_index])](p.current_value, index) is True]
         else:
             allowed_legits = logits_list
+
     if len(allowed_legits) == 0:
         return None
     max_logit = max(allowed_legits)
@@ -145,7 +177,7 @@ def get_answer_parameters(prompt, function: Function):
             if types[p.current_parameter_index] == "string" and char =='"':
                 comma_or_space = True
                 continue
-            if comma_or_space and  char is ",":
+            if comma_or_space and  char == ',':
                 if p.current_parameter_index >= len(p.keys_encoded)-1:
                     answer[-1] = answer[-1].replace(',', '}')
                     word = word.replace(',', '}')

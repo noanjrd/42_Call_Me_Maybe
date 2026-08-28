@@ -8,7 +8,7 @@ def parse_args():
         type=str,
         nargs="?", 
         required=False,
-        default="data/input/functions_definition.json",
+        default="src/data/input/functions_definition.json",
         help=""
         )
 
@@ -17,7 +17,7 @@ def parse_args():
         type=str,
         nargs="?", 
         required=False,
-        default="data/input/function_calling_tests.json",
+        default="src/data/input/function_calling_tests.json",
         help=""
         )
 
@@ -26,7 +26,7 @@ def parse_args():
         type=str,
         nargs="?", 
         required=False,
-        default="data/output/function_calling_results.json",
+        default="src/data/output/function_calling_results.json",
         help=""
         )
 

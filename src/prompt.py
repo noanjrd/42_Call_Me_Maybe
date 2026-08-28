@@ -59,7 +59,7 @@ def get_prompt_for_parameters(input: str, function: Function) -> str:
         prompt += "- Translate descriptions into regex syntax: digits/numbers -> \\d+, whitespace -> \\s+, and vowels -> [AEIOUaeiou].\n"
         prompt += "- Use character classes, quantifiers, groups, alternation, anchors, and word boundaries when needed.\n"
         prompt += "- Escape regex metacharacters when the user means them literally (for example, \\. matches a literal period).\n"
-        prompt += "- The regex is a JSON string, not a Python string literal. Escape every backslash for JSON: write \\\\d+ for the regex \\d+, and \\\\bcat\\\\b for \\bcat\\b.\n"
+        # prompt += "- The regex is a JSON string, not a Python string literal. Escape every backslash for JSON: write \\\\d+ for the regex \\d+, and \\\\bcat\\\\b for \\bcat\\b.\n"
         prompt += "- Prefer the simplest pattern that satisfies the request; do not add capture groups or anchors unless required.\n"
         prompt += """
 Regex examples:

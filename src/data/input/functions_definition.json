@@ -67,5 +67,17 @@
     "returns": {
       "type": "string"
     }
+  },
+  {
+    "name": "fn_return_fruit",
+    "description": "Return the string 'banana' is the parameter is false",
+    "parameters": {
+      "p": {
+        "type": "bool"
+      }
+    },
+    "returns": {
+      "type": "string"
+    }
   }
 ]
