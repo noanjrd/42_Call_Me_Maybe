@@ -1,0 +1,20 @@
+[
+    {
+        "prompt": "Replace all vowels in 'Programming is fun' with asterisks",
+        "name": "fn_substitute_string_with_regex",
+        "parameters": {
+            "source_string": "Programming is fun",
+            "regex": "[AEIOUaeiou]",
+            "replacement": "*"
+        }
+    },
+    {
+        "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat with another cat'",
+        "name": "fn_substitute_string_with_regex",
+        "parameters": {
+            "source_string": "The cat sat on the mat with another cat",
+            "regex": "cat",
+            "replacement": "dog"
+        }
+    }
+]

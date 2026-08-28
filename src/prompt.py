@@ -53,26 +53,30 @@ def get_prompt_for_parameters(input: str, function: Function) -> str:
     prompt += "Infer values that are clearly implied by the request.\n"
 
     if "regex" in function.parameters:
-        prompt += "\nRegex parameter rules:\n"
-        prompt += "- Write only the regex pattern, without /.../ delimiters or surrounding commentary.\n"
-        prompt += "- Make the pattern match exactly the text the user wants replaced.\n"
-        prompt += "- Translate descriptions into regex syntax: digits/numbers -> \\d+, whitespace -> \\s+, and vowels -> [AEIOUaeiou].\n"
-        prompt += "- Use character classes, quantifiers, groups, alternation, anchors, and word boundaries when needed.\n"
-        prompt += "- Escape regex metacharacters when the user means them literally (for example, \\. matches a literal period).\n"
-        # prompt += "- The regex is a JSON string, not a Python string literal. Escape every backslash for JSON: write \\\\d+ for the regex \\d+, and \\\\bcat\\\\b for \\bcat\\b.\n"
-        prompt += "- Prefer the simplest pattern that satisfies the request; do not add capture groups or anchors unless required.\n"
         prompt += """
-Regex examples:
-- "all numbers" -> "\\\\d+"
-- "all vowels" -> "[AEIOUaeiou]"
-- "the whole word cat" -> "\\\\bcat\\\\b"
-- "asterisks" as a replacement -> "*"
-The regex field must contain a regex pattern, not a description or a plain list of characters.
+Regex rules:
+- Return only the regex pattern: no /.../ delimiters, explanation, or surrounding text.
+- Match exactly the text that the user wants replaced. Prefer the simplest correct pattern.
+- Do not use parentheses/capture groups unless a captured group is explicitly needed. For vowels, use [AEIOUaeiou], not ([AEIOUaeiou]).
+- Use regex syntax when appropriate: numbers -> \\d+, whitespace -> \\s+, and one or more repetitions -> +.
+- Escape literal regex metacharacters: a literal period is \\.; a literal plus is \\+.
+- To match a complete word, use word boundaries: \\bcat\\b matches the whole word cat.
+
+JSON escaping is required:
+- The answer is JSON, so every regex backslash must be written as two backslashes in the JSON value.
+- Correct JSON values: digits is "\\\\d+"; whole-word cat is "\\\\bcat\\\\b".
+- Never use "\\bcat\\b" with one backslash in a JSON value: JSON treats \\b as a backspace escape, not a regex word boundary.
+
+Exact examples:
+- Replace all numbers: "regex": "\\\\d+"
+- Replace all vowels: "regex": "[AEIOUaeiou]"
+- Replace the whole word cat: "regex": "\\\\bcat\\\\b"
+- Replace a literal period: "regex": "\\\\."
 """
 
     prompt += "Do not use placeholders such as 'description', 'string', or 'value'.\n"
     prompt += "Return only one JSON object, without an explanation or Markdown.\n"
     prompt += f"Use exactly this structure: {{{schema}}}\n\n"
     prompt += "JSON:\n"
-    # print(prompt)
+    print(prompt)
     return prompt

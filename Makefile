@@ -3,6 +3,10 @@ py=python3
 run:
 	uv run $(py) src/main.py $(ARGS)
 	
+test:
+	uv run $(py) src/main.py --input data/input/test.json
+	
+
 install:
 	uv pip install -r requirements.txt
 

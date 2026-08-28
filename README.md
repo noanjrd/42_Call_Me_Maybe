@@ -1,5 +1,6 @@
 chekc every fucntion if it is json valid
 have to recreate the requirements
+have to write the readme
 
 
 debug: 
