@@ -6,7 +6,7 @@ def parse_args():
     parser.add_argument(
         "--functions_definition",
         type=str,
-        nargs="?", 
+        nargs="?",
         required=False,
         default="data/input/functions_definition.json",
         help=""
@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument(
         "--input",
         type=str,
-        nargs="?", 
+        nargs="?",
         required=False,
         default="data/input/function_calling_tests.json",
         help=""
@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument(
         "--output",
         type=str,
-        nargs="?", 
+        nargs="?",
         required=False,
         default="data/output/function_calling_results.json",
         help=""

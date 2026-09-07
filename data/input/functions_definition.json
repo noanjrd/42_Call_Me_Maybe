@@ -67,5 +67,35 @@
     "returns": {
       "type": "string"
     }
+  },
+  {
+    "name": "fn_substitute_string_with_regex",
+    "description": "Replace all occurrences matching a regex pattern in a string.",
+    "parameters": {
+      "source_string": {
+        "type": "string"
+      },
+      "regex": {
+        "type": "string"
+      },
+      "replacement": {
+        "type": "string"
+      }
+    },
+    "returns": {
+      "type": "string"
+    }
+  },
+  {
+    "name": "fn_is_even",
+    "description": "Check if an integer is even, returns true if even, false if odd.",
+    "parameters": {
+      "integer": {
+        "type": "number"
+      }
+    },
+    "returns": {
+      "type": "bool"
+    }
   }
 ]

@@ -1,5 +1,6 @@
-chekc every fucntion if it is json valid
-have to recreate the requirements
+have to add tests
+have to rewrute prompt for regex
+have to write prompt in a different file than a .py of flake
 have to write the readme
 
 

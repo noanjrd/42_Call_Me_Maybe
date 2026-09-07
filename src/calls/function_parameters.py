@@ -1,12 +1,7 @@
-from Function import Function
+from ..Function import Function
 from pydantic import BaseModel
-from model import llm
+from ..model import llm
 
-
-
-type_constraints = {
-
-}
 
 class Parameters(BaseModel):
     encoded_prompt: list[int]
@@ -14,7 +9,7 @@ class Parameters(BaseModel):
     types: list[str]
     lap: int
     current_parameter_index: int
-    index_key_token:int
+    index_key_token: int
     predicting_value: bool
     current_value: str
 
@@ -27,18 +22,17 @@ def bool(past_values, value):
         return False
     if "true"[::n] in word:
         if n > 4:
-            for i in range(4,n):
+            for i in range(4, n):
                 if word[i] not in ",}":
                     return False
         return True
     if "false"[::n] in word:
         if n > 5:
-            for i in range(5,n):
+            for i in range(5, n):
                 if word[i] not in ",}":
                     return False
         return True
     return False
-
 
 
 def string(past_values, value):
@@ -56,9 +50,10 @@ def string(past_values, value):
             return False
         if word[i] == ',':
             comma = True
-        i+=1
+        i += 1
 
     return True
+
 
 def number(past_values, value):
     word = past_values + llm.decode(value)
@@ -70,7 +65,7 @@ def number(past_values, value):
     while status != "END":
         if status == "START":
             if word[0].isdigit():
-                status="BEFORE_POINT"
+                status = "BEFORE_POINT"
             elif word[0] in "+-":
                 status = "BEFORE_POINT"
                 word = word[1:]
@@ -78,15 +73,15 @@ def number(past_values, value):
                 return False
         if status == "BEFORE_POINT":
             if all(letter in "0123456789" for letter in word):
-                status="END"
+                status = "END"
                 continue
             for index in range(len(word)):
                 if word[index] == '.':
-                    word = word[index+1:]
+                    word = word[index + 1:]
                     status = "AFTER_POINT"
                     break
                 if word[index] == ',' or word[index] == ' ' or word[index] == '}':
-                    word = word[index+1:]
+                    word = word[index + 1:]
                     status = "AFTER_COMMA_SPACE"
                     break
             else: 
@@ -100,29 +95,30 @@ def number(past_values, value):
                     word = word[index+1:]
                     status = "AFTER_COMMA_SPACE"
                     break
-            else: return False
+            else:
+                return False
         if status == "AFTER_COMMA_SPACE":
             if all(letter == ' ' for letter in word) or len(word) == 0:
                 status = "END"
                 continue
             return False
-        
     return True
-
-
 
 
 def get_next_logit_for_function_parameters(p: Parameters):
     logits_list = llm.get_logits_from_input_ids(p.encoded_prompt)
-    # print(logits_list)
     functions = [number, string, bool]
     type_names = ["number", "string", "bool"]
     allowed_legits = None
-    if p.predicting_value == False:
-        allowed_legits = [logit for index, logit in enumerate(logits_list) if index == p.keys_encoded[p.current_parameter_index][p.index_key_token]]
+    if p.predicting_value is False:
+        allowed_legits = [logit for index, logit in enumerate(logits_list)
+                          if index == p.keys_encoded
+                          [p.current_parameter_index][p.index_key_token]]
     else:
         if p.types[p.current_parameter_index] in type_names:
-            allowed_legits = [logit for index, logit in enumerate(logits_list) if functions[type_names.index(p.types[p.current_parameter_index])](p.current_value, index) is True]
+            allowed_legits = [logit for index, logit in enumerate(logits_list)
+                              if functions[type_names.index(p.types
+                                [p.current_parameter_index])](p.current_value, index) is True]
         else:
             allowed_legits = logits_list
 
@@ -133,18 +129,13 @@ def get_next_logit_for_function_parameters(p: Parameters):
     return next_token
 
 
-
 def get_answer_parameters(prompt, function: Function):
     encoded_prompt = llm.encode(prompt)[0].tolist()
-
-    answer = []
-    names = [ '"' + key + '":' for key, _ in function.parameters.items()]
+    names = ['"' + key + '":' for key, _ in function.parameters.items()]
     names[0] = '{' + names[0]
     keys_encoded = [llm.encode(name).tolist()[0] for name in names]
     types = [value for _, value in function.parameters.items()]
-    # print(names, keys_encoded, types)
 
-    # print("number parameters", function.number_parameters)
     p = Parameters(
         encoded_prompt=encoded_prompt,
         keys_encoded=keys_encoded,
@@ -155,9 +146,10 @@ def get_answer_parameters(prompt, function: Function):
         predicting_value=False,
         current_value="")
 
+    answer = []
     while True:
         next_token = get_next_logit_for_function_parameters(p)
-        if next_token == None:
+        if next_token is None:
             break
         word = llm.decode(next_token)
         if p.predicting_value and not p.current_value and word[0] != ' ':
@@ -165,35 +157,33 @@ def get_answer_parameters(prompt, function: Function):
         answer.append(word)
         print(word)
         p.current_value += word
-        if p.predicting_value == False:
+        if p.predicting_value is False:
             p.index_key_token += 1
-        if p.predicting_value == False and  p.index_key_token >= len(p.keys_encoded[p.current_parameter_index]):
-            p.index_key_token = 0
-            p.predicting_value = True
-            p.current_value = ""
+            if p.index_key_token >= len(p.keys_encoded
+                                        [p.current_parameter_index]):
+                p.index_key_token = 0
+                p.predicting_value = True
+                p.current_value = ""
 
         comma_or_space = types[p.current_parameter_index] == "number"
         for char in word:
-            if types[p.current_parameter_index] == "string" and char =='"':
+            if types[p.current_parameter_index] == "string" and char == '"':
                 comma_or_space = True
                 continue
-            if comma_or_space and  char == ',':
+            if comma_or_space and char == ',':
                 if p.current_parameter_index >= len(p.keys_encoded)-1:
                     answer[-1] = answer[-1].replace(',', '}')
                     word = word.replace(',', '}')
                     print("here")
                     break
                 p.predicting_value = False
-                p.current_parameter_index +=1
+                p.current_parameter_index += 1
                 p.current_value = ""
                 break
         p.encoded_prompt.append(next_token)
         if '}' in word:
             break
-        p.lap+=1
-
+        p.lap += 1
 
     print("\nfinished\n")
-    # print("".join(answer))
     return "".join(answer)
-

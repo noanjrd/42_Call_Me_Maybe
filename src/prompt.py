@@ -1,7 +1,6 @@
 import json
-from Function import Function
-from model import llm
-import argparse
+from .Function import Function
+from .model import llm
 
 
 def get_functions(path: str):

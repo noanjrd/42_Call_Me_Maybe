@@ -1,17 +1,18 @@
-py=python3
+py=python
 
 run:
-	uv run $(py) src/main.py $(ARGS)
+	uv run $(py) -m src  $(ARGS)
 	
 test:
-	uv run $(py) src/main.py --input data/input/test.json
+	uv run $(py) -m src --input data/input/additional_tests.json
 	
 
 install:
+	uv pip install -e src/llm_sdk
 	uv pip install -r requirements.txt
 
 debug:
-	uv run $(py) -m pdb src/main.py
+	uv run $(py) -m pdb src
 
 clean:
 	find . -type d -name '__pycache__' -prune -exec rm -rf {} +
