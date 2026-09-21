@@ -84,7 +84,7 @@ def number(past_values, value):
                     word = word[index + 1:]
                     status = "AFTER_COMMA_SPACE"
                     break
-            else: 
+            else:
                 return False
         if status == "AFTER_POINT":
             if all(letter in "0123456789" for letter in word):

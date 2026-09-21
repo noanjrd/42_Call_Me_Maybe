@@ -1,0 +1,6 @@
+REGEX GENERATION RULES
+    When a regex is required, you must provide ONLY the pattern using this strict syntax:
+    - To match numbers/digits: [0-9]+
+    - To match vowels: ([aeiouAEIOU])
+    - To match a complete word, use word boundaries: \bcat\b matches only the word cat, not catalog or copycat.
+CRITICAL: Never use '.*' or broad wildcards. Be as specific as possible.
