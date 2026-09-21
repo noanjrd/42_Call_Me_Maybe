@@ -1,11 +1,8 @@
 [
   {
-    "prompt": "Reverse the string '' "
+    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
   },
   {
     "prompt": "Sum the number 452365455878 with 45678779"
-  },
-  {
-    "prompt": "Is 24 odd"
   }
 ]
