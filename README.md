@@ -1,8 +1,6 @@
 # 42_Call_Me_Maybe
 
-Function calling from scratch with a small local LLM, using constrained
-(grammar-guided) token generation instead of relying on a provider's
-built-in "tool calling" + structured-output feature.
+Function calling from scratch with a small local LLM, implementing constrained token generation rather than relying on provider-native tool calling or structured outputs.
 
 Given a list of available functions (name, description, parameters, return
 type) and a natural-language prompt, the program:
