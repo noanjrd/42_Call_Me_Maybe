@@ -1,6 +1,6 @@
 # 42_Call_Me_Maybe
 
-Function calling from scratch with the Qwen3.5-0.6B-Instruct local LLM, implementing constrained token generation rather than relying on provider-native tool calling or structured outputs.
+Function calling from scratch with the Qwen3-0.6B-Instruct local LLM, implementing constrained token generation rather than relying on provider-native tool calling or structured outputs.
 
 Given a list of available functions (name, description, parameters, return
 type) and a natural-language prompt, the program:
