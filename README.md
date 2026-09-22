@@ -78,6 +78,7 @@ src/
 - The dependencies in [requirements.txt](requirements.txt), which include
   the local `llm_sdk` package (installed in editable mode) plus `torch`,
   `transformers` and `huggingface_hub` to run the model.
+- Make for running project commands
 
 ## Installation
 
