@@ -9,5 +9,5 @@ class Function(BaseModel):
     number_parameters: int
     return_type: dict[str, str]
 
-    def get_name_description(self):
+    def get_name_description(self) -> str:
         return f"Name : {self.name}, Description : {self.description}"

@@ -1,3 +1,5 @@
+import builtins
+
 from ..Function import Function
 from pydantic import BaseModel
 from ..model import llm
@@ -14,7 +16,7 @@ class Parameters(BaseModel):
     current_value: str
 
 
-def bool(past_values, value):
+def bool(past_values: str, value: list[int]) -> builtins.bool:
     word = past_values + llm.decode(value)
     word = word.lstrip()
     n = len(word)
@@ -35,7 +37,7 @@ def bool(past_values, value):
     return False
 
 
-def string(past_values, value):
+def string(past_values: str, value: list[int]) -> builtins.bool:
     word = past_values + llm.decode(value)
     word = word.lstrip()
     n = len(word)
@@ -55,7 +57,7 @@ def string(past_values, value):
     return True
 
 
-def number(past_values, value):
+def number(past_values: str, value: list[int]) -> builtins.bool:
     word = past_values + llm.decode(value)
     word = word.lstrip()
     if not word:
@@ -80,7 +82,7 @@ def number(past_values, value):
                     word = word[index + 1:]
                     status = "AFTER_POINT"
                     break
-                if word[index] == ',' or word[index] == ' ' or word[index] == '}':
+                if word[index] in (',', ' ', '}'):
                     word = word[index + 1:]
                     status = "AFTER_COMMA_SPACE"
                     break
@@ -105,7 +107,7 @@ def number(past_values, value):
     return True
 
 
-def get_next_logit_for_function_parameters(p: Parameters):
+def get_next_logit_for_function_parameters(p: Parameters) -> int | None:
     logits_list = llm.get_logits_from_input_ids(p.encoded_prompt)
     functions = [number, string, bool]
     type_names = ["number", "string", "bool"]
@@ -116,9 +118,13 @@ def get_next_logit_for_function_parameters(p: Parameters):
                           [p.current_parameter_index][p.index_key_token]]
     else:
         if p.types[p.current_parameter_index] in type_names:
-            allowed_legits = [logit for index, logit in enumerate(logits_list)
-                              if functions[type_names.index(p.types
-                                [p.current_parameter_index])](p.current_value, index) is True]
+            parameter_type = p.types[p.current_parameter_index]
+            validator = functions[type_names.index(parameter_type)]
+            allowed_legits = [
+                logit
+                for index, logit in enumerate(logits_list)
+                if validator(p.current_value, [index]) is True
+            ]
         else:
             allowed_legits = logits_list
 
@@ -126,10 +132,10 @@ def get_next_logit_for_function_parameters(p: Parameters):
         return None
     max_logit = max(allowed_legits)
     next_token = logits_list.index(max_logit)
-    return next_token
+    return next_token  # type: ignore[no-any-return]
 
 
-def get_answer_parameters(prompt, function: Function):
+def get_answer_parameters(prompt: str, function: Function) -> str:
     encoded_prompt = llm.encode(prompt)[0].tolist()
     names = ['"' + key + '":' for key, _ in function.parameters.items()]
     names[0] = '{' + names[0]
@@ -151,7 +157,7 @@ def get_answer_parameters(prompt, function: Function):
         next_token = get_next_logit_for_function_parameters(p)
         if next_token is None:
             break
-        word = llm.decode(next_token)
+        word = llm.decode([next_token])
         if p.predicting_value and not p.current_value and word[0] != ' ':
             word = " " + word
         answer.append(word)

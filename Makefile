@@ -2,6 +2,9 @@ py=python
 
 run:
 	uv run $(py) -m src  $(ARGS)
+
+unit:
+	uv run $(py) -m pytest -q --basetemp=.pytest_tmp
 	
 test:
 	uv run $(py) -m src --input data/input/additional_tests.json
@@ -19,6 +22,3 @@ clean:
 
 lint:
 	flake8 src & mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
-
-lint-strict:
-	flake8 . and mypy . --strict

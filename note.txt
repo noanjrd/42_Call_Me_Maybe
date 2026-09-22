@@ -1,12 +1,2 @@
-  {
-    "name": "fn_is_even",
-    "description": "Check if an integer is even, returns true if even, false if odd.",
-    "parameters": {
-      "integer": {
-        "type": "number"
-      }
-    },
-    "returns": {
-      "type": "bool"
-    }
-  }
+check the astericks
+need to write the docstrings

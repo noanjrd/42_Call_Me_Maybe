@@ -2,7 +2,9 @@ from ..Function import Function
 from ..model import llm
 
 
-def get_next_logit_for_function_name(encoded_prompt, lap,  candidates):
+def get_next_logit_for_function_name(
+    encoded_prompt: list[int], lap: int, candidates: list[list[int]]
+) -> int | None:
     logits_list = llm.get_logits_from_input_ids(encoded_prompt)
 
     valid_candidates = [c for c in candidates if len(c) >= lap+1]
@@ -13,10 +15,12 @@ def get_next_logit_for_function_name(encoded_prompt, lap,  candidates):
         return None
     max_logit = max(allowed_legits)
     next_token = logits_list.index(max_logit)
-    return next_token
+    return next_token  # type: ignore[no-any-return]
 
 
-def get_answer_function_name(prompt, functions: list[Function]):
+def get_answer_function_name(
+    prompt: str, functions: list[Function]
+) -> str:
     encoded_prompt = llm.encode(prompt)[0].tolist()
     candidates = []
     for function in functions:
@@ -30,7 +34,7 @@ def get_answer_function_name(prompt, functions: list[Function]):
         if next_token is None:
             break
 
-        word = llm.decode(next_token)
+        word = llm.decode([next_token])
         answer.append(word)
         print(word)
         if "()" in word:
