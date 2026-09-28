@@ -68,16 +68,17 @@ src/
     function_name.py                            constrained decoding for picking the function name
     function_parameters.py                      constrained decoding + type validators for the arguments
   llm_sdk/                                      local package wrapping the Hugging Face model
-  tests/unit_tests.py                           unit tests (no real model calls)
+  tests/test_unit.py                            unit tests (no real model calls)
 ```
 
 ## Requirements
 
 - Python >= 3.13
 - [uv](https://docs.astral.sh/uv/) for dependency management
-- The dependencies in [requirements.txt](requirements.txt), which include
-  the local `llm_sdk` package (installed in editable mode) plus `torch`,
-  `transformers` and `huggingface_hub` to run the model.
+- The dependencies declared in [pyproject.toml](pyproject.toml), which
+  include the local `llm_sdk` package (a `uv` workspace member, installed
+  in editable mode) plus `torch`, `transformers` and `huggingface_hub` to
+  run the model.
 - Make for running project commands
 
 ## Installation
@@ -86,8 +87,8 @@ src/
 make install
 ```
 
-This installs the local `llm_sdk` package and the rest of `requirements.txt`
-with `uv`.
+This runs `uv sync`, which installs the local `llm_sdk` workspace package
+and the rest of the dependencies from `pyproject.toml`.
 
 The first run will download the default model (`Qwen/Qwen3-0.6B`) from the
 Hugging Face Hub.
@@ -105,19 +106,19 @@ Every prompt in the input file produces an entry in
 `data/output/function_calling_results.json` with the original prompt, the
 chosen function name and the extracted parameters.
 
-You can also call the module directly and override any of the default
+You can also call the entry point directly and override any of the default
 paths:
 
 ```bash
-uv run python -m src --functions_definition data/input/functions_definition.json \
-                      --input data/input/function_calling_tests.json \
-                      --output data/output/function_calling_results.json
+uv run 42-call-me-maybe --functions_definition data/input/functions_definition.json \
+                         --input data/input/function_calling_tests.json \
+                         --output data/output/function_calling_results.json
 ```
 
 ## Testing & linting
 
 ```bash
-make unit          # run the unit tests (pytest, model calls mocked out)
+make pytest         # run the unit tests (pytest, model calls mocked out)
 make lint           # flake8 + mypy on src
 ```
 

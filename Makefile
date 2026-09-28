@@ -1,24 +1,25 @@
 py=python
 
 run:
-	uv run $(py) -m src  $(ARGS)
+	uv run 42-call-me-maybe $(ARGS)
 
-unit:
+
+
+pytest:
 	uv run $(py) -m pytest -q --basetemp=.pytest_tmp
-	
-test:
-	uv run $(py) -m src --input data/input/additional_tests.json
-	
 
+test:
+	uv run 42-call-me-maybe --input data/input/additional_tests.json
+	
 install:
-	uv pip install -e src/llm_sdk
-	uv pip install -r requirements.txt
+	uv sync
 
 debug:
 	uv run $(py) -m pdb src
 
 clean:
-	find . -type d -name '__pycache__' -prune -exec rm -rf {} +
+	sudo find . -type d -name '__pycache__' -prune -exec rm -rf {} +
+	rm -rf data/output .pytest_cache .pytest_tmp .mypy_cache
 
 lint:
-	flake8 src & mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run flake8 src && uv run mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
