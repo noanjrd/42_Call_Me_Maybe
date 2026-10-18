@@ -1,2 +1,2 @@
-check the astericks
+need to check astericks
 need to write the docstrings
